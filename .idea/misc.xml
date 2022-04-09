@@ -3,10 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/codeStuff/Kotlin/AndroidApp/StoryApp/app/src/main/res/drawable/bg_button.xml" value="0.2175" />
         <entry key="..\:/codeStuff/Kotlin/AndroidApp/StoryApp/app/src/main/res/layout/activity_camera.xml" value="0.25905797101449274" />
         <entry key="..\:/codeStuff/Kotlin/AndroidApp/StoryApp/app/src/main/res/layout/activity_login.xml" value="0.25905797101449274" />
         <entry key="..\:/codeStuff/Kotlin/AndroidApp/StoryApp/app/src/main/res/layout/activity_main.xml" value="0.25905797101449274" />
         <entry key="..\:/codeStuff/Kotlin/AndroidApp/StoryApp/app/src/main/res/layout/activity_post_image.xml" value="0.25905797101449274" />
+        <entry key="..\:/codeStuff/Kotlin/AndroidApp/StoryApp/app/src/main/res/layout/activity_signup.xml" value="0.25905797101449274" />
         <entry key="..\:/codeStuff/Kotlin/AndroidApp/StoryApp/app/src/main/res/layout/activity_splash_screen.xml" value="0.25905797101449274" />
         <entry key="..\:/codeStuff/Kotlin/AndroidApp/StoryApp/app/src/main/res/layout/activity_story_detail.xml" value="0.25905797101449274" />
         <entry key="..\:/codeStuff/Kotlin/AndroidApp/StoryApp/app/src/main/res/layout/item_row_photo.xml" value="0.25905797101449274" />
