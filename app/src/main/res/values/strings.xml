@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">StoryApp</string>
+    <string name="empty_data">Unfortunately, there\'s no photo right now</string>
+    <string name="camera_x">camera</string>
+    <string name="upload">Upload</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">gallery</string>
+    <string name="enter_photo_description_here">Enter photo description here...</string>
+    <string name="add_description_hint">Add your photo description here...</string>
+    <string name="photo_name">Photo Author</string>
+    <string name="description">Photo Description here</string>
+</resources>
