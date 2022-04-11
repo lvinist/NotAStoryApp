@@ -1,9 +1,10 @@
-package com.alph.storyapp.ui
+package com.alph.storyapp.ui.signup
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.alph.storyapp.databinding.ActivitySignupBinding
+import com.alph.storyapp.ui.login.LoginActivity
 
 class SignupActivity : AppCompatActivity() {
 

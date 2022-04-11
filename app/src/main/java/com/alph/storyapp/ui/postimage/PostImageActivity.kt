@@ -1,4 +1,4 @@
-package com.alph.storyapp.ui
+package com.alph.storyapp.ui.postimage
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

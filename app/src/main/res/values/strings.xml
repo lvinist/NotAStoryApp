@@ -19,4 +19,6 @@
     <string name="sign_up_intent">sign up</string>
     <string name="sign_up">SIGN UP</string>
     <string name="hint_signin">Have an account?</string>
+    <string name="success_login">Login Successfully</string>
+    <string name="fail_login">Invalid credential</string>
 </resources>

@@ -1,12 +1,12 @@
-package com.alph.storyapp.ui
+package com.alph.storyapp.ui.detail
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.alph.storyapp.R
 
-class CameraActivity : AppCompatActivity() {
+class StoryDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_camera)
+        setContentView(R.layout.activity_story_detail)
     }
 }
