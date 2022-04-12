@@ -4,16 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alph.storyapp.data.Story
 import com.alph.storyapp.databinding.ActivityMainBinding
 import com.alph.storyapp.storage.UserPreference
 import com.alph.storyapp.ui.ViewModelFactory
+import com.alph.storyapp.ui.detail.StoryDetailActivity
 import com.alph.storyapp.ui.login.LoginActivity
 import com.alph.storyapp.ui.main.adapter.StoryAdapter
 import com.alph.storyapp.ui.postimage.PostImageActivity
@@ -25,7 +26,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: StoryAdapter
-    private lateinit var extraToken: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +39,14 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity, PostImageActivity::class.java)
             startActivity(intent)
         }
+
+        adapter.setOnItemClickCallback(object: StoryAdapter.OnItemClickCallback {
+            override fun onItemClicked(data: Story) {
+                val intent = Intent(this@MainActivity, StoryDetailActivity::class.java)
+                intent.putExtra(StoryDetailActivity.EXTRA_STORY, data)
+                startActivity(intent)
+            }
+        })
     }
 
     private fun initRecyclerView() {

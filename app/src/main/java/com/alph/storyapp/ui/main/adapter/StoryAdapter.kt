@@ -12,6 +12,12 @@ import com.bumptech.glide.Glide
 class StoryAdapter : RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
 
     private var storyList: List<Story>? = null
+    private var onItemClickCallback: OnItemClickCallback? = null
+
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
 
     fun setStoryList(storyList: List<Story>?) {
         this.storyList = storyList
@@ -32,8 +38,12 @@ class StoryAdapter : RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
         else return storyList?.size!!
     }
 
-    class StoryViewHolder(private val binding: ItemRowPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class StoryViewHolder(private val binding: ItemRowPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Story) {
+
+            binding.root.setOnClickListener{
+                onItemClickCallback?.onItemClicked(data)
+            }
 
             binding.apply {
                 tvName.text = data.name
@@ -46,4 +56,9 @@ class StoryAdapter : RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
 
         }
     }
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data: Story)
+    }
+
 }

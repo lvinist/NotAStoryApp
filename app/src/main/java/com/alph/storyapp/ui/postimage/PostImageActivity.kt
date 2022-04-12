@@ -76,6 +76,9 @@ class PostImageActivity : AppCompatActivity() {
         binding = ActivityPostImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 this,
@@ -89,6 +92,11 @@ class PostImageActivity : AppCompatActivity() {
         binding.btCamera.setOnClickListener { startCameraX() }
         binding.btGallery.setOnClickListener { startGallery() }
         binding.btUpload.setOnClickListener { lifecycleScope.launch(Dispatchers.Main) { uploadImage() } }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     private fun setupViewModel() {
@@ -124,7 +132,7 @@ class PostImageActivity : AppCompatActivity() {
     private val launcherIntentCameraX = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == CAMERA_X_RESULT) {
             val myFile = it.data?.getSerializableExtra("picture") as File
-            val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
+            it.data?.getBooleanExtra("isBackCamera", true) as Boolean
 
             getFile = myFile
             val result = BitmapFactory.decodeFile(getFile?.path)

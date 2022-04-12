@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">StoryApp</string>
+    <string name="app_name">Story App</string>
     <string name="empty_data">Unfortunately, there\'s no photo right now</string>
     <string name="camera_x">camera</string>
     <string name="upload">Upload</string>
@@ -26,4 +26,6 @@
     <string name="add_image_warning">Please add image first</string>
     <string name="failed_take_pic">Failed to take picture</string>
     <string name="fail_camera">Failed to show camera</string>
+    <string name="name">Alph</string>
+    <string name="date">Uploaded on %1$s</string>
 </resources>
