@@ -1,5 +1,6 @@
 package com.alph.storyapp.ui.main
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -43,14 +45,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this@MainActivity, PostImageActivity::class.java)
             startActivity(intent)
         }
-
-        adapter.setOnItemClickCallback(object: StoryAdapter.OnItemClickCallback {
-            override fun onItemClicked(data: Story) {
-                val intent = Intent(this@MainActivity, StoryDetailActivity::class.java)
-                intent.putExtra(StoryDetailActivity.EXTRA_STORY, data)
-                startActivity(intent)
-            }
-        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -10,9 +10,6 @@ import com.bumptech.glide.Glide
 
 class StoryDetailActivity : AppCompatActivity() {
 
-    companion object {
-        const val EXTRA_STORY = "extra_story"
-    }
 
     private lateinit var binding: ActivityStoryDetailBinding
 
@@ -34,7 +31,7 @@ class StoryDetailActivity : AppCompatActivity() {
     }
 
     private fun setupView() {
-        val story = intent.getParcelableExtra<Story>(EXTRA_STORY) as Story
+        val story = intent.getParcelableExtra<Story>("Story") as Story
         binding.nameTextView.text = story.name
         binding.dateTextView.text = getString(R.string.date, story.createdAt.withDateFormat())
         binding.descTextView.text = story.description
