@@ -46,7 +46,7 @@
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:id="@+id/TIL_description"
-        app:layout_constraintBottom_toTopOf="@id/bt_upload"
+        app:layout_constraintBottom_toTopOf="@id/pb_post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -68,16 +68,25 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-
-
     <Button
         android:id="@+id/bt_upload"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:layout_margin="8dp"
         android:text="@string/upload"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/pb_post"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        style="?android:attr/progressBarStyle"
+        android:visibility="invisible"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

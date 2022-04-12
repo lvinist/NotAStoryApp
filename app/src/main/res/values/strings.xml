@@ -21,4 +21,9 @@
     <string name="hint_signin">Have an account?</string>
     <string name="success_login">Login Successfully</string>
     <string name="fail_login">Invalid credential</string>
+    <string name="permission_no_granted">Permission is not granted</string>
+    <string name="failed_retrofit_instance">Failed Retrofit Instance</string>
+    <string name="add_image_warning">Please add image first</string>
+    <string name="failed_take_pic">Failed to take picture</string>
+    <string name="fail_camera">Failed to show camera</string>
 </resources>

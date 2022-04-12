@@ -25,8 +25,6 @@ import com.alph.storyapp.storage.UserPreference
 import com.alph.storyapp.ui.ViewModelFactory
 import com.alph.storyapp.ui.main.MainActivity
 import com.alph.storyapp.ui.signup.SignupActivity
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -91,6 +89,7 @@ class LoginActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
 
                     } else {

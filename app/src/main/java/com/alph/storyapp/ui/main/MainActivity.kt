@@ -16,6 +16,7 @@ import com.alph.storyapp.storage.UserPreference
 import com.alph.storyapp.ui.ViewModelFactory
 import com.alph.storyapp.ui.login.LoginActivity
 import com.alph.storyapp.ui.main.adapter.StoryAdapter
+import com.alph.storyapp.ui.postimage.PostImageActivity
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: StoryAdapter
+    private lateinit var extraToken: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +34,11 @@ class MainActivity : AppCompatActivity() {
 
         initRecyclerView()
         setupViewModel()
+
+        binding.fbAddstory.setOnClickListener{
+            val intent = Intent(this@MainActivity, PostImageActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initRecyclerView() {
@@ -54,16 +61,16 @@ class MainActivity : AppCompatActivity() {
             mainViewModel.setStories(tokenAuth = user.token)
         }
 
-        mainViewModel.getStories().observe(this, {
+        mainViewModel.getStories().observe(this) {
             if (it != null) {
                 adapter.setStoryList(it)
                 adapter.notifyDataSetChanged()
                 showLoading(false)
             } else {
                 showLoading(false)
-                Toast.makeText(this, "Error getting list or list is null", Toast.LENGTH_SHORT).show()
+                binding.tvNullData.visibility = View.VISIBLE
             }
-        })
+        }
     }
 
     private fun showLoading(state: Boolean) {
