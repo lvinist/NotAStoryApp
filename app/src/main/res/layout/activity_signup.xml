@@ -37,13 +37,16 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name"
+            android:hint="@string/name_hint"
             app:startIconDrawable="@drawable/ic_baseline_person_24">
 
             <EditText
+                android:id="@+id/edt_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp" />
+                android:layout_marginHorizontal="16dp"
+                android:autofillHints="name"
+                android:inputType="textPersonName" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,6 +58,7 @@
             app:startIconDrawable="@drawable/ic_baseline_email_24">
 
             <com.alph.storyapp.ui.login.EmailEditText
+                android:id="@+id/edt_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp" />
@@ -70,6 +74,7 @@
             app:startIconDrawable="@drawable/ic_baseline_lock_24">
 
             <com.alph.storyapp.ui.login.PasswordEditText
+                android:id="@+id/edt_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -78,10 +83,21 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
+            android:id="@+id/bt_signup"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="@string/sign_up" />
+
+        <ProgressBar
+            android:id="@+id/pb_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="54dp"
+            style="?android:attr/progressBarStyle"
+            android:visibility="invisible"/>
     </LinearLayout>
 
     <TextView

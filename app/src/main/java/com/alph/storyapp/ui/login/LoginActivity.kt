@@ -50,6 +50,21 @@ class LoginActivity : AppCompatActivity() {
             startActivity(signUpIntent)
         }
 
+        binding.tvPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                binding.btnSignin.isEnabled = binding.tvPassword.text?.length!! >= 6
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                binding.btnSignin.isEnabled = binding.tvPassword.text?.length!! >= 6
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                binding.btnSignin.isEnabled = binding.tvPassword.text?.length!! >= 6
+            }
+
+        })
+
         binding.btnSignin.setOnClickListener { loginUser() }
     }
 
@@ -62,10 +77,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser() {
-        binding.pbLogin.visibility = View.VISIBLE
         val email = binding.tvEmail.text.toString()
         val password = binding.tvPassword.text.toString().trim()
 
+        binding.pbLogin.visibility = View.VISIBLE
         ApiConfig().getApiService().loginUser(Login(email, password))
             .enqueue(object : Callback<LoginResponse> {
 
@@ -89,19 +104,28 @@ class LoginActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
 
                     } else {
                         binding.pbLogin.visibility = View.INVISIBLE
 
-                        Toast.makeText(applicationContext, getString(R.string.fail_login), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            applicationContext,
+                            getString(R.string.fail_login),
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                        Log.d(LoginActivity::class.java.simpleName, response.body()?.message.toString())
+                        Log.d(
+                            LoginActivity::class.java.simpleName,
+                            response.body()?.message.toString()
+                        )
                     }
                 }
 
             })
+
 
     }
 }
