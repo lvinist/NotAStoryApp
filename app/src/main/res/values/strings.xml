@@ -28,4 +28,7 @@
     <string name="fail_camera">Failed to show camera</string>
     <string name="name">Alph</string>
     <string name="date">Uploaded on %1$s</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="success_story">Story uploaded successfully</string>
 </resources>

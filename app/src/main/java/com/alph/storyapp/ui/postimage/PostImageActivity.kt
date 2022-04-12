@@ -166,7 +166,7 @@ class PostImageActivity : AppCompatActivity() {
                         if (response.isSuccessful) {
                             val responseBody = response.body()
                             if (responseBody != null && !responseBody.error) {
-                                Toast.makeText(this@PostImageActivity, responseBody.message, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@PostImageActivity, getString(R.string.success_story), Toast.LENGTH_SHORT).show()
                                 finish()
                             }
                         } else {

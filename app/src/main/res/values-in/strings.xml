@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Story App</string>
+    <string name="empty_data">Sayangnya, tidak ada foto disini</string>
+    <string name="camera_x">kamera</string>
+    <string name="upload">unggah</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">galeri</string>
+    <string name="enter_photo_description_here">Masukkan deskripsi foto disini</string>
+    <string name="add_description_hint">tambahkan deskripsi fotomu disini</string>
+    <string name="photo_name">Pemilik Foto</string>
+    <string name="description">Deskripsi Foto Disini</string>
+    <string name="err_empty_email">Isi kolom surel</string>
+    <string name="err_invalid_email">Surel tidak valid</string>
+    <string name="login">MASUK</string>
+    <string name="email">Surel</string>
+    <string name="password">Kata sandi</string>
+    <string name="sign_in">Masuk</string>
+    <string name="hint_to_signup">Apakah anda tidak memiliki akun?</string>
+    <string name="sign_up_intent">daftar</string>
+    <string name="sign_up">DAFTAR</string>
+    <string name="hint_signin">Apakah anda memiliki akun?</string>
+    <string name="success_login">Berhasil masuk</string>
+    <string name="fail_login">Kredensial tidak valid</string>
+    <string name="permission_no_granted">Izin tidak diberikan</string>
+    <string name="failed_retrofit_instance">Retrofit gagal dijalankan</string>
+    <string name="add_image_warning">Tambahkan gambar terlebih dahulu</string>
+    <string name="failed_take_pic">Gagal mengambil foto</string>
+    <string name="fail_camera">Gagal mengubah kamera</string>
+    <string name="name">Alph</string>
+    <string name="date">Diunggah pada %1$s</string>
+    <string name="settings">Pengaturan</string>
+    <string name="logout">Keluar</string>
+    <string name="success_story">Story berhasil diunggah</string>
+</resources>
