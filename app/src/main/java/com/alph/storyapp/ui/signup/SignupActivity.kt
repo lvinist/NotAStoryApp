@@ -55,7 +55,7 @@ class SignupActivity : AppCompatActivity() {
     private fun registerUser() {
         val email = binding.edtEmail.text.toString().trim()
         val name = binding.edtName.text.toString().trim()
-        val password = binding.edtPassword.toString().trim()
+        val password = binding.edtPassword.text.toString().trim()
 
         binding.pbSignup.visibility = View.VISIBLE
         ApiConfig().getApiService().registerUser(Register(name, email, password))
