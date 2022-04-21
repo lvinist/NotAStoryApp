@@ -39,4 +39,6 @@
     <string name="name_hint">Nama</string>
     <string name="map">Peta</string>
     <string name="title_activity_map_story">Aktivitas Peta</string>
+    <string name="satellite_type">Satelit</string>
+    <string name="terrain_type">Dataran</string>
 </resources>

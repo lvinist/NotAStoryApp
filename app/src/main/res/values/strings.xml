@@ -38,4 +38,8 @@
     <string name="name_hint">Name</string>
     <string name="map">Map</string>
     <string name="title_activity_map_story">MapStoryActivity</string>
+    <string name="satellite_type">Satellite</string>
+    <string name="terrain_type">Terrain</string>
+    <string name="hybrid_type" translatable="false">Hybrid</string>
+    <string name="normal_type" translatable="false">Normal</string>
 </resources>
