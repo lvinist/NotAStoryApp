@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
-    id "com.google.android.secrets-gradle-plugin" version "1.1.0"
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'kotlin-kapt'
 }
 
@@ -17,8 +17,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField("String", "MAP_API_KEY", '"AIzaSyBY_tRfReKOQ-I4N8uIQWX_FB_tsIFcPSo"')
     }
 
     buildFeatures {

@@ -23,6 +23,7 @@ import com.alph.storyapp.ui.ViewModelFactory
 import com.alph.storyapp.ui.detail.StoryDetailActivity
 import com.alph.storyapp.ui.login.LoginActivity
 import com.alph.storyapp.ui.main.adapter.StoryAdapter
+import com.alph.storyapp.ui.maps.MapStoryActivity
 import com.alph.storyapp.ui.postimage.PostImageActivity
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -62,6 +63,11 @@ class MainActivity : AppCompatActivity() {
             R.id.logout -> {
                 mainViewModel.logout()
                 finish()
+                true
+            }
+            R.id.to_map -> {
+                val intent = Intent(this@MainActivity, MapStoryActivity::class.java)
+                startActivity(intent)
                 true
             }
             else -> true
