@@ -36,4 +36,6 @@
     <string name="email_invalid">Email format is invalid</string>
     <string name="password_invalid">Password must be at least 6 character</string>
     <string name="name_hint">Name</string>
+    <string name="map">Map</string>
+    <string name="title_activity_map_story">MapStoryActivity</string>
 </resources>

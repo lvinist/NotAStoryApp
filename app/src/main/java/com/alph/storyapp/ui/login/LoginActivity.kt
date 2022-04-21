@@ -5,12 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatEditText
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -130,97 +128,5 @@ class LoginActivity : AppCompatActivity() {
     }
 }
 
-class EmailEditText : AppCompatEditText {
-
-    private var emailRegex: Regex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
-
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init()
-    }
 
 
-    private fun init() {
-
-        addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-                //do nothing
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.toString().isEmpty()) {
-                    error = context.getString(R.string.err_empty_email)
-                    requestFocus()
-                } else if (!s.toString().matches(emailRegex)) {
-                    error = context.getString(R.string.err_invalid_email)
-                    requestFocus()
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                //do nothing
-            }
-        })
-    }
-}
-
-class PasswordEditText : AppCompatEditText {
-
-    constructor(context: Context) : super(context) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init()
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init()
-    }
-
-
-    private fun init() {
-
-        addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-                //do nothing
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.toString().length < 6) {
-                    error = "Password must be at least 6 character long"
-                    requestFocus()
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                //do nothing
-            }
-        })
-    }
-}

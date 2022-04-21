@@ -37,4 +37,6 @@
     <string name="email_invalid">Format surel salah</string>
     <string name="password_invalid">Kata sandi minimal 6 karakter</string>
     <string name="name_hint">Nama</string>
+    <string name="map">Peta</string>
+    <string name="title_activity_map_story">Aktivitas Peta</string>
 </resources>
