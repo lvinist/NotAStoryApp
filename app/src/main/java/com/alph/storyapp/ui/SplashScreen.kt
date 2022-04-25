@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import com.alph.storyapp.R
+import com.alph.storyapp.ui.login.LoginActivity
 import com.alph.storyapp.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SplashScreen : AppCompatActivity() {
 
     companion object {
@@ -20,7 +23,7 @@ class SplashScreen : AppCompatActivity() {
         supportActionBar?.hide()
 
         Handler().postDelayed({
-            startActivity(Intent(applicationContext, MainActivity::class.java))
+            startActivity(Intent(applicationContext, LoginActivity::class.java))
             finish()
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }, EXTRA_DURATION)

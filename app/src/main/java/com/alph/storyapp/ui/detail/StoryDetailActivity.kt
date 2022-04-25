@@ -7,7 +7,9 @@ import com.alph.storyapp.data.Story
 import com.alph.storyapp.databinding.ActivityStoryDetailBinding
 import com.alph.storyapp.helper.Helper.withDateFormat
 import com.bumptech.glide.Glide
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StoryDetailActivity : AppCompatActivity() {
 
 

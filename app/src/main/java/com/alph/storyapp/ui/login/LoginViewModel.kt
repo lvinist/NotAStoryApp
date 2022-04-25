@@ -1,30 +1,31 @@
 package com.alph.storyapp.ui.login
 
+
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.alph.storyapp.api.ApiConfig
 import com.alph.storyapp.data.Login
 import com.alph.storyapp.data.LoginResponse
-import com.alph.storyapp.data.User
-import com.alph.storyapp.storage.UserPreference
-import kotlinx.coroutines.GlobalScope
+import com.alph.storyapp.repository.user.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import javax.inject.Inject
 
-class LoginViewModel(private val pref: UserPreference) : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
-    fun saveUser(user: User) {
+    val loginResponse: LiveData<LoginResponse> get() = _loginResponse
+    private val _loginResponse = MutableLiveData<LoginResponse>()
+
+    val loginToken = userRepository.userToken
+
+    fun login(loginBody: Login) {
+        Log.d("login", loginBody.toString())
         viewModelScope.launch {
-            pref.saveUser(User(user.userId, user.name, user.token, user.isLogin))
+            _loginResponse.postValue(userRepository.loginUser(loginBody))
         }
     }
 
-    fun getUser(): LiveData<User> {
-        return pref.getUser().asLiveData()
-    }
 }

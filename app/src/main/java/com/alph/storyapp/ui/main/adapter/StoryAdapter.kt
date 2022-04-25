@@ -6,61 +6,54 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.alph.storyapp.data.Story
 import com.alph.storyapp.databinding.ItemRowPhotoBinding
 import com.alph.storyapp.ui.detail.StoryDetailActivity
-import com.bumptech.glide.Glide
 
-class StoryAdapter : RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
+class StoryAdapter : PagingDataAdapter<Story, StoryAdapter.StoryViewHolder>(Comparator) {
 
-    private var storyList: List<Story>? = null
+    private object Comparator : DiffUtil.ItemCallback<Story>() {
+        override fun areItemsTheSame(oldItem: Story, newItem: Story): Boolean =
+            oldItem == newItem
 
-    fun setStoryList(storyList: List<Story>?) {
-        this.storyList = storyList
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder {
-        val view = ItemRowPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
-        return StoryViewHolder(view)
+        override fun areContentsTheSame(oldItem: Story, newItem: Story): Boolean =
+            oldItem.description == newItem.description
     }
 
     override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
-        holder.bind(storyList?.get(position)!!)
+        holder.bind(getItem(position) ?: Story())
     }
 
-    override fun getItemCount(): Int {
-        return if(storyList == null) 0
-        else storyList?.size!!
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder = StoryViewHolder(
+        binding = ItemRowPhotoBinding.inflate(LayoutInflater.from(parent.context),
+        parent,
+        false
+        )
+    )
 
-    inner class StoryViewHolder(private val binding: ItemRowPhotoBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Story) {
+    inner class StoryViewHolder(
+        private val binding: ItemRowPhotoBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(story: Story) {
+            binding.story = story
 
             itemView.setOnClickListener{
                 val intent = Intent(itemView.context, StoryDetailActivity::class.java)
-                intent.putExtra("Story", data)
+                intent.putExtra("Story", story)
 
-                val optionsCompat: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        itemView.context as Activity,
-                Pair(binding.ivPhoto, "image"),
-                Pair(binding.tvName, "name"),
-                Pair(binding.tvDescription, "description")
-                )
+                val optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    itemView.context as Activity,
+                    Pair(binding.ivPhoto, "image"),
+                    Pair(binding.tvName, "name"),
+                    Pair(binding.tvDescription, "description")
+                ).toBundle()
 
-                itemView.context.startActivity(intent, optionsCompat.toBundle())
+                itemView.context.startActivity(intent, optionsCompat)
             }
-
-            binding.apply {
-                tvName.text = data.name
-                tvDescription.text = data.description
-
-                Glide.with(itemView)
-                    .load(data.photoUrl)
-                    .into(ivPhoto)
-            }
-
         }
     }
 

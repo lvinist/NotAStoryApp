@@ -1,34 +1,40 @@
 package com.alph.storyapp.api
 
 import com.alph.storyapp.data.*
+import com.alph.storyapp.utils.Constant.NETWORK_LOAD_SIZE
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
 
     @POST("login")
-    fun loginUser(@Body login: Login): Call<LoginResponse>
+    suspend fun loginUser(@Body loginBody: Login): LoginResponse
 
     @POST("register")
-    fun registerUser(@Body register: Register): Call<FileUploadResponse>
+    suspend fun registerUser(@Body registerBody: Register): FileUploadResponse
 
     @GET("stories")
-    fun getStories(@Header("Authorization") token: String): Call<StoryResponse>
+    suspend fun getStories(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = NETWORK_LOAD_SIZE,
+        @Header("Authorization") token: String
+    ): StoryResponse<Story>
 
     @GET("stories")
-    fun getStoriesWithLocation(
+    suspend fun getStoriesWithLocation(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = NETWORK_LOAD_SIZE,
         @Header("Authorization") token: String,
         @Query("location") location : Int = 1
-    ): Call<StoryResponse>
+    ): StoryResponse<Story>
 
     @Multipart
-    @POST("/v1/stories")
-    fun uploadImage(
+    @POST("stories")
+    suspend fun uploadImage(
         @Part file: MultipartBody.Part,
-        @Part("description") description: RequestBody,
+        @Part description: MultipartBody.Part,
         @Header("Authorization") token: String
-    ): Call<FileUploadResponse>
+    ): FileUploadResponse
 
 }

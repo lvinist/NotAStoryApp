@@ -15,7 +15,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.alph.storyapp.R
 import com.alph.storyapp.databinding.ActivityCameraBinding
-import com.alph.storyapp.utils.createFile
+import com.alph.storyapp.utils.utils.createFile
 
 class CameraActivity : AppCompatActivity() {
 

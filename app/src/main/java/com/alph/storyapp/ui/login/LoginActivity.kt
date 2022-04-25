@@ -1,39 +1,48 @@
 package com.alph.storyapp.ui.login
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
-import com.alph.storyapp.R
-import com.alph.storyapp.api.ApiConfig
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.alph.storyapp.data.FileUploadResponse
 import com.alph.storyapp.data.Login
-import com.alph.storyapp.data.LoginResponse
-import com.alph.storyapp.data.User
 import com.alph.storyapp.databinding.ActivityLoginBinding
-import com.alph.storyapp.storage.UserPreference
-import com.alph.storyapp.ui.ViewModelFactory
 import com.alph.storyapp.ui.main.MainActivity
 import com.alph.storyapp.ui.signup.SignupActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.alph.storyapp.utils.Constant.REGISTER_RESPONSE
+import com.alph.storyapp.utils.utils.isValidEmail
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
+@AndroidEntryPoint
+@ExperimentalCoroutinesApi
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var loginViewModel: LoginViewModel
+
+    private val loginViewModel: LoginViewModel by viewModels()
+
+    private val launcherRegister =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                val response = it.data?.getParcelableExtra<FileUploadResponse>(REGISTER_RESPONSE)
+                Log.d("login", "$response")
+                Toast.makeText(this, "${response?.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,90 +50,103 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         supportActionBar?.hide()
-        setupViewModel()
 
-        binding.tvSignupIntent.setOnClickListener {
+        signupUser()
+        observeLoginToken()
+        observeLoginResponse()
+        setEnableSignInButton()
+        signinButtonClickListener()
+    }
+
+    private fun signupUser() {
+        binding.tvSignupIntent.setOnClickListener{
             val signUpIntent = Intent(this@LoginActivity, SignupActivity::class.java)
-            startActivity(signUpIntent)
+            launcherRegister.launch(signUpIntent)
         }
-
-        binding.tvPassword.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                binding.btnSignin.isEnabled = binding.tvPassword.text?.length!! >= 6
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                binding.btnSignin.isEnabled = binding.tvPassword.text?.length!! >= 6
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-                binding.btnSignin.isEnabled = binding.tvPassword.text?.length!! >= 6
-            }
-
-        })
-
-        binding.btnSignin.setOnClickListener { loginUser() }
     }
 
-    private fun setupViewModel() {
-        val pref = UserPreference.getInstance(dataStore)
-        loginViewModel = ViewModelProvider(
-            this@LoginActivity,
-            ViewModelFactory(pref)
-        )[LoginViewModel::class.java]
-    }
-
-    private fun loginUser() {
-        val email = binding.tvEmail.text.toString()
-        val password = binding.tvPassword.text.toString().trim()
-
-        binding.pbLogin.visibility = View.VISIBLE
-        ApiConfig().getApiService().loginUser(Login(email, password))
-            .enqueue(object : Callback<LoginResponse> {
-
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Log.d("failure: ", t.message.toString())
-                }
-
-                override fun onResponse(
-                    call: Call<LoginResponse>,
-                    response: Response<LoginResponse>
-                ) {
-                    if (response.code() == 200) {
-                        val body = response.body()?.loginResult as User
-
-                        loginViewModel.saveUser(User(body.userId, body.name, body.token, true))
-                        binding.pbLogin.visibility = View.INVISIBLE
-
-                        Toast.makeText(
-                            applicationContext,
-                            getString(R.string.success_login),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        intent.flags =
-                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-
-                    } else {
-                        binding.pbLogin.visibility = View.INVISIBLE
-
-                        Toast.makeText(
-                            applicationContext,
-                            getString(R.string.fail_login),
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        Log.d(
-                            LoginActivity::class.java.simpleName,
-                            response.body()?.message.toString()
-                        )
+    private fun observeLoginResponse() {
+        loginViewModel.loginResponse.observe(this) { loginResponse ->
+            loginResponse.error.let {
+                when (it) {
+                    true -> {
+                        Toast.makeText(this, loginResponse.message, Toast.LENGTH_SHORT).show()
+                        binding.pbLogin.visibility = View.GONE
+                    }
+                    false -> {
+                        startActivity(Intent(this, MainActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        })
+                        finish()
                     }
                 }
+            }
+        }
+    }
 
-            })
+    private fun observeLoginToken() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                loginViewModel.loginToken.collect {
+                    if (it.isNotEmpty()) {
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        })
+                        finish()
+                    }
+                }
+            }
+        }
+    }
 
+    private fun signinButtonClickListener() {
+        binding.btnSignin.setOnClickListener {
+            binding.apply {
+                tvPassword.setOnEditorActionListener { textView, actionId, _ ->
+                    if (textView.text.isNotEmpty() && textView.error.isNullOrEmpty() && binding.tvEmail.error.isNullOrEmpty()) {
+                        loginViewModel.login(
+                            Login(
+                                binding.tvEmail.text.toString(),
+                                textView.text.toString()
+                            )
+                        )
+                        textView.closeSoftKeyboard()
+                    }
+                    actionId == EditorInfo.IME_ACTION_DONE
+                }
+                binding.pbLogin.visibility = View.VISIBLE
+            }
+            loginViewModel.login(
+                Login(
+                    binding.tvEmail.text.toString(),
+                    binding.tvPassword.text.toString()
+                )
+            )
+        }
+    }
 
+    private fun View.closeSoftKeyboard() {
+        val inputMethodManager =
+            this.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(this.windowToken, 0)
+        this.clearFocus()
+    }
+
+    private fun setEnableSignInButton() {
+        binding.tvPassword.addTextChangedListener {
+            setButtonEnabled()
+        }
+    }
+
+    private fun setButtonEnabled() {
+        val password = binding.tvPassword.text
+        val email = binding.tvEmail.text
+        val buttonShouldEnabled = (password.toString()
+            .isNotEmpty() && password.toString().length >= 6) && (email.toString()
+            .isNotEmpty() && email.toString().isValidEmail())
+        binding.btnSignin.isEnabled = buttonShouldEnabled
     }
 }
 

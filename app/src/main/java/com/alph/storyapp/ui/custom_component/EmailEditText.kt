@@ -6,10 +6,10 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import com.alph.storyapp.R
+import com.alph.storyapp.utils.utils.isValidEmail
 
 class EmailEditText : AppCompatEditText {
 
-    private var emailRegex: Regex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
 
     constructor(context: Context) : super(context) {
         init()
@@ -41,17 +41,11 @@ class EmailEditText : AppCompatEditText {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.toString().isEmpty()) {
-                    error = context.getString(R.string.err_empty_email)
-                    requestFocus()
-                } else if (!s.toString().matches(emailRegex)) {
-                    error = context.getString(R.string.err_invalid_email)
-                    requestFocus()
-                }
+
             }
 
-            override fun afterTextChanged(s: Editable?) {
-                //do nothing
+            override fun afterTextChanged(e: Editable) {
+                if (!e.toString().isValidEmail()) error = context.getString(R.string.err_invalid_email)
             }
         })
     }

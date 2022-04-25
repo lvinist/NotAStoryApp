@@ -1,7 +1,6 @@
 package com.alph.storyapp.ui.postimage
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -10,40 +9,22 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.alph.storyapp.R
-import com.alph.storyapp.api.ApiConfig
-import com.alph.storyapp.data.FileUploadResponse
 import com.alph.storyapp.databinding.ActivityPostImageBinding
-import com.alph.storyapp.storage.UserPreference
-import com.alph.storyapp.ui.ViewModelFactory
-import com.alph.storyapp.ui.main.MainViewModel
-import com.alph.storyapp.utils.reduceFileImage
-import com.alph.storyapp.utils.uriToFile
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.alph.storyapp.utils.Constant.ADD_STORY_RESPONSE
+import com.alph.storyapp.utils.utils.uriToFile
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+@AndroidEntryPoint
 class PostImageActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityPostImageBinding
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: PostImageViewModel by viewModels()
 
     companion object {
         const val CAMERA_X_RESULT = 200
@@ -76,9 +57,6 @@ class PostImageActivity : AppCompatActivity() {
         binding = ActivityPostImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 this,
@@ -87,23 +65,39 @@ class PostImageActivity : AppCompatActivity() {
             )
         }
 
-        setupViewModel()
-
         binding.btCamera.setOnClickListener { startCameraX() }
         binding.btGallery.setOnClickListener { startGallery() }
-        binding.btUpload.setOnClickListener { lifecycleScope.launch(Dispatchers.Main) { uploadImage() } }
+
+        viewModel.image.observe(this) { file ->
+            binding.apply {
+                previewImageView.setImageBitmap(BitmapFactory.decodeFile(file.path))
+                btUpload.isEnabled = file != null
+                btUpload.setOnClickListener {
+                    val description = binding.edtDescription.text.toString()
+                    viewModel.addNewStoryWithToken(
+                        description,
+                        file
+                    )
+                }
+            }
+        }
+
+        viewModel.addStoryResponse.observe(this@PostImageActivity) {
+            if (it.error == false && it != null) {
+                setResult(RESULT_OK, Intent().putExtra(ADD_STORY_RESPONSE, it))
+                finishAndRemoveTask()
+            }
+        }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
+    private val launcherIntentGallery = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val selectedImg: Uri = result.data?.data as Uri
+            val myFile = uriToFile(selectedImg, this@PostImageActivity)
 
-    private fun setupViewModel() {
-        val pref = UserPreference.getInstance(dataStore)
-        viewModel = ViewModelProvider(this, ViewModelFactory(pref))[MainViewModel::class.java]
+            viewModel.saveImage(myFile)
+        }
     }
-
 
     private fun startGallery() {
         val intent = Intent()
@@ -113,77 +107,17 @@ class PostImageActivity : AppCompatActivity() {
         launcherIntentGallery.launch(chooser)
     }
 
-    private var getFile: File? = null
-    private val launcherIntentGallery = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val selectedImg: Uri = result.data?.data as Uri
-            val myFile = uriToFile(selectedImg, this@PostImageActivity)
-
-            getFile = myFile
-
-            binding.previewImageView.setImageURI(selectedImg)
+    private val launcherIntentCameraX = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == CAMERA_X_RESULT) {
+            val myFile = it.data?.getSerializableExtra("picture") as File
+            viewModel.saveImage(myFile)
+            it.data?.getBooleanExtra("isBackCamera", true) as Boolean
         }
     }
 
     private fun startCameraX() {
         val intent = Intent(this, CameraActivity::class.java)
         launcherIntentCameraX.launch(intent)
-    }
-    private val launcherIntentCameraX = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == CAMERA_X_RESULT) {
-            val myFile = it.data?.getSerializableExtra("picture") as File
-            it.data?.getBooleanExtra("isBackCamera", true) as Boolean
-
-            getFile = myFile
-            val result = BitmapFactory.decodeFile(getFile?.path)
-
-            binding.previewImageView.setImageBitmap(result)
-        }
-    }
-
-    private fun uploadImage() {
-        if (getFile != null) {
-            val file = reduceFileImage(getFile as File)
-
-            val description = binding.edtDescription.text.toString().toRequestBody("text/plain".toMediaType())
-            val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-            val imageMultipart : MultipartBody.Part = MultipartBody.Part.createFormData(
-                "photo",
-                file.name,
-                requestImageFile
-            )
-
-            binding.btUpload.visibility = View.GONE
-            binding.pbPost.visibility = View.VISIBLE
-
-            viewModel.getUser().observe(this) { user ->
-                val service = ApiConfig().getApiService().uploadImage(imageMultipart, description, "Bearer ${user.token}")
-                service.enqueue(object : Callback<FileUploadResponse> {
-                    override fun onResponse(
-                        call: Call<FileUploadResponse>,
-                        response: Response<FileUploadResponse>
-                    ){
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()
-                            if (responseBody != null && !responseBody.error) {
-                                Toast.makeText(this@PostImageActivity, getString(R.string.success_story), Toast.LENGTH_SHORT).show()
-                                finish()
-                            }
-                        } else {
-                            Toast.makeText(this@PostImageActivity, response.message(), Toast.LENGTH_SHORT).show()
-                            binding.btUpload.visibility = View.VISIBLE
-                        }
-                    }
-                    override fun onFailure(call: Call<FileUploadResponse>, t: Throwable) {
-                        Toast.makeText(this@PostImageActivity, getString(R.string.failed_retrofit_instance), Toast.LENGTH_SHORT).show()
-                        binding.btUpload.visibility = View.VISIBLE
-                    }
-                })
-            }
-
-        } else {
-            Toast.makeText(this@PostImageActivity, getString(R.string.add_image_warning), Toast.LENGTH_SHORT).show()
-        }
     }
 
 }
